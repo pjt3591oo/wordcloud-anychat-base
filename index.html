@@ -1,0 +1,72 @@
+<!-- wordcloud sample -->
+<!-- https://docs.anychart.com/Basic_Charts/Tag_Cloud -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+  <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-tag-cloud.min.js"></script>
+  <title>wordcloud sample</title>
+</head>
+
+<body>
+  <div class="chart-area">
+    <div id="container" style="width:100%; height:100%;"></div>
+  </div>
+  <script>
+    anychart.onDocumentReady(function () {
+      const data = [
+        {category: 'a', value: 80, custom_field: 80, x: "learning"},
+        {category: 'a', value: 56, custom_field: 56, x: "includes"},
+        {category: 'b', value: 44, custom_field: 44, x: "lists"},
+        {category: 'b', value: 40, custom_field: 40, x: "meaning"},
+        {category: 'c', value: 36, custom_field: 36, x: "useful"},
+        {category: 'c', value: 32, custom_field: 32, x: "different"}
+      ];
+
+      const chart = anychart.tagCloud(data);
+
+      // 색상
+      const customColorScale = anychart.scales.ordinalColor();
+      customColorScale.colors(["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff"]);
+      chart.colorScale(customColorScale);
+      chart.colorRange().enabled(true);
+
+      // 텍스트 간격
+      chart.textSpacing(1);
+
+      // 차트모양
+      chart.mode("spiral"); // spiral, rect
+
+      // 툴팁설정(string)
+      // chart.tooltip().format("{%yPercentOfTotal}% ({%value})\n\n{%custom_field}");
+
+      // 툴팁설정(html)
+      chart.tooltip().useHtml(true);
+      chart.tooltip().format(function() {
+        const percentOfTotal = (this.getData("value")*100)/this.getStat("sum");
+        if (percentOfTotal < 15){
+          return `${percentOfTotal.toFixed(1)} %<br></br><br></br> ${this.getData("custom_field")} <div>15미만</div>`;
+        } else {
+          return `<span style='font-size:26'> ${percentOfTotal.toFixed(1)} %</span><br><br> ${this.getData("custom_field")} <div>15이상</div>`
+        }
+      });
+
+      // 카테고리 범례
+      chart.legend(true);
+
+      // word click event
+      chart.listen("pointClick", function(e){
+        alert(e.point.get('x'))
+      });
+
+      chart.angles([0]);
+      chart.container("container");
+      chart.draw();
+    }); 
+  </script>
+</body>
+
+</html>
